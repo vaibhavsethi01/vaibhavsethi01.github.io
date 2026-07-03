@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Card — Banking Risk Platform · Vaibhav Sethi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#e9ecef;--panel:#fff;--panel-2:#f4f6f8;--ink:#14171a;--ink-2:#474e56;--ink-3:#838c95;--line:#d7dce1;--line-2:#e6eaee;--risk:#c0392b;--safe:#1f8a5b;--warn:#cf8a1e;--display:"Space Grotesk",sans-serif;--body:"IBM Plex Sans",sans-serif;--mono:"IBM Plex Mono",monospace;--maxw:820px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(233,236,239,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{display:flex;align-items:center;justify-content:space-between;height:58px;max-width:var(--maxw);margin:0 auto;padding:0 28px;gap:14px;}
+  .back{font-family:var(--mono);font-size:12.5px;text-decoration:none;color:var(--ink-2);padding:7px 13px;border:1px solid var(--line);border-radius:6px;background:var(--panel);transition:.16s;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  .brand{font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;gap:10px;}
+  .brand .vs{background:var(--ink);color:var(--paper);padding:3px 7px;border-radius:4px;font-size:12px;}
+  @media(max-width:640px){.brand{display:none;}}
+  .hero{padding:48px 0 8px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--risk);}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.02em;margin:12px 0 0;line-height:1.05;}
+  .meta{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:14px;line-height:1.9;}
+  .meta span{color:var(--ink-2);}
+  .doc{padding:26px 0 60px;}
+  .doc h2{font-family:var(--display);font-weight:600;font-size:1.3rem;letter-spacing:-.01em;margin:38px 0 12px;padding-top:20px;border-top:1px solid var(--line);}
+  .doc h2:first-of-type{border-top:none;padding-top:0;}
+  .doc h3{font-family:var(--display);font-weight:600;font-size:1.02rem;margin:22px 0 8px;}
+  .doc p{color:var(--ink-2);margin:10px 0;}
+  .doc b,.doc strong{color:var(--ink);font-weight:600;}
+  .doc ul{margin:10px 0 10px 4px;list-style:none;}
+  .doc li{color:var(--ink-2);padding-left:18px;position:relative;margin-bottom:6px;}
+  .doc li::before{content:"›";position:absolute;left:2px;color:var(--risk);}
+  code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);padding:1px 5px;border-radius:4px;color:var(--ink);}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+  @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px;}
+  .card .l{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+  .card .v{font-family:var(--display);font-weight:700;font-size:1.5rem;margin-top:6px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0;}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line-2);}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+  td.n{font-family:var(--mono);text-align:right;color:var(--ink);}
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--risk);border-radius:8px;padding:16px 18px;margin:18px 0;font-size:14.5px;color:var(--ink-2);}
+  .note{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:6px;}
+  footer{border-top:1px solid var(--line);padding:24px 0 44px;font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+  ::selection{background:var(--ink);color:var(--paper);}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="back" href="banking.html">← Back to Banking Risk Platform</a>
+  <div class="brand"><span class="vs">VS</span> Model Card</div>
+</div></div>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Governance · Model Card</div>
+    <h1>Credit Default Prediction — Model Card</h1>
+    <div class="meta">
+      MODEL <span>XGBoost, Platt-calibrated</span> · VERSION <span>1.0</span> · DATE <span>2025-09-22</span><br>
+      AUTHOR <span>Vaibhav Sethi — UBC Statistics</span> · REPO <span>banking-risk-platform</span>
+    </div>
+  </section>
+
+  <div class="doc">
+    <h2>1 · Executive summary</h2>
+    <p>An end-to-end credit-default prediction pipeline (data → preprocessing → model → calibration → business thresholding → explainability). The final model is an <b>XGBoost classifier with Platt calibration</b>. Held-out test results:</p>
+    <div class="kpis">
+      <div class="card"><div class="l">ROC AUC</div><div class="v" style="color:var(--safe)">0.791</div></div>
+      <div class="card"><div class="l">PR AUC</div><div class="v">0.565</div></div>
+      <div class="card"><div class="l">Brier</div><div class="v">0.133</div></div>
+      <div class="card"><div class="l">Bal. accuracy</div><div class="v">0.723</div></div>
+    </div>
+    <div class="callout"><b>Business impact:</b> at the chosen threshold, expected loss rate on accepted customers is <b>~5.94%</b> (empirical, test). On a hypothetical $1B portfolio this implies material avoided losses (order-of-magnitude: tens of millions USD annually) versus an unmodeled baseline.</div>
+
+    <h2>2 · What I built</h2>
+    <p>A production-oriented credit-risk pipeline in R using <code>tidymodels</code> + <code>xgboost</code>: robust preprocessing (median imputation, Yeo-Johnson transform, normalization), SMOTE for class imbalance, hyperparameter tuning, Platt calibration, and explainability (VIP + SHAP sampling).</p>
+
+    <h2>3 · Data</h2>
+    <ul>
+      <li><b>Source:</b> UCI — Default of Credit Card Clients (Taiwan)</li>
+      <li><b>Rows:</b> 30,000</li>
+      <li><b>Predictors:</b> <code>LIMIT_BAL</code>, <code>SEX</code>, <code>EDUCATION</code>, <code>MARRIAGE</code>, <code>AGE</code>, <code>PAY_0..PAY_6</code>, <code>BILL_AMT1..3</code>, <code>PAY_AMT1..3</code>, derived <code>DTI</code></li>
+      <li><b>Target:</b> <code>default_payment_next_month</code> (0 / 1)</li>
+    </ul>
+
+    <h2>4 · Pipeline &amp; modeling choices</h2>
+    <ul>
+      <li>Train / calibration / test splits: <b>80% / 8% / 12%</b>, stratified, reproducible seed</li>
+      <li>Recipe: drop technical columns, median impute, zero-variance filter, Yeo-Johnson → normalize, one-hot encode categoricals</li>
+      <li>Resampling: 5-fold CV for tuning</li>
+      <li>Models compared: Logistic Regression (GLM) benchmark vs XGBoost challenger</li>
+      <li>Calibration: <b>Platt scaling</b> on a holdout calibration set</li>
+      <li>Threshold: business-aware — maximize KS/Youden subject to expected-loss-rate constraint (ELR ≤ 6%) on the accepted population</li>
+    </ul>
+
+    <h2>5 · Detailed test results</h2>
+    <table>
+      <tr><th>Metric</th><th style="text-align:right">Value</th></tr>
+      <tr><td>ROC AUC</td><td class="n">0.791</td></tr>
+      <tr><td>PR AUC</td><td class="n">0.565</td></tr>
+      <tr><td>Brier score</td><td class="n">0.133</td></tr>
+      <tr><td>Chosen threshold (PD)</td><td class="n">0.234</td></tr>
+      <tr><td>Sensitivity (recall)</td><td class="n">0.653</td></tr>
+      <tr><td>Specificity</td><td class="n">0.793</td></tr>
+      <tr><td>Balanced accuracy</td><td class="n">0.723</td></tr>
+      <tr><td>Expected loss rate (accepted)</td><td class="n">0.0594</td></tr>
+      <tr><td>Test set N</td><td class="n">~6,001</td></tr>
+    </table>
+
+    <h2>6 · Explainability &amp; checks</h2>
+    <ul>
+      <li><b>Global importance (VIP):</b> top features — <code>PAY_0</code> (recent payment status), <code>LIMIT_BAL</code>, <code>PAY_2</code>, <code>PAY_3</code>, <code>AGE</code>, <code>PAY_6</code></li>
+      <li><b>Local explainability:</b> SHAP-style explanations on a 500-sample subset; top contributors exported for review</li>
+      <li><b>Calibration:</b> decile reliability plot; Platt scaling aligns predicted PDs to observed default frequencies</li>
+      <li><b>Stability:</b> train vs test comparison + monitoring hooks for PD and feature-distribution drift</li>
+    </ul>
+
+    <h2>7 · Fairness &amp; risk management</h2>
+    <p>Subgroup analysis by <code>SEX</code>, <code>EDUCATION</code>, and <code>AGE</code> buckets found no alarming disparate impact on the training/test data. The model is <b>not production-approved</b> until broader external validation and business policy sign-off. Governance artifacts (workflow, calibrator, metrics) are versioned in the repo; monitoring plan: quarterly calibration check, annual retrain (or on drift).</p>
+
+    <h2>8 · Reproducibility</h2>
+    <p>Key artifacts: <code>models/final_xgb_workflow.rds</code>, <code>models/platt_scaler.rds</code>, <code>docs/metrics_summary.csv</code>, <code>docs/Model-Card.html</code>, <code>analysis/step5_evaluation.R</code>.</p>
+    <div class="note">Business-case figures are illustrative; real deployment requires vintage analysis, migration matrices, macro overlays, and provisioning practices.</div>
+  </div>
+
+  <footer>Model card · Banking Risk Platform · Vaibhav Sethi · governed under SR 11-7-style model-risk practice.</footer>
+</div>
+</body>
+</html>

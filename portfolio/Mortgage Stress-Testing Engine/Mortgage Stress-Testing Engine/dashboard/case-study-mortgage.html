@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Mortgage Stress-Testing Engine · Vaibhav Sethi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#e9ecef;--panel:#fff;--panel-2:#f4f6f8;--ink:#14171a;--ink-2:#474e56;--ink-3:#838c95;--line:#d7dce1;--line-2:#e6eaee;--risk:#c0392b;--safe:#1f8a5b;--warn:#cf8a1e;--display:"Space Grotesk",sans-serif;--body:"IBM Plex Sans",sans-serif;--mono:"IBM Plex Mono",monospace;--maxw:820px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(233,236,239,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{display:flex;align-items:center;justify-content:space-between;height:58px;max-width:var(--maxw);margin:0 auto;padding:0 28px;gap:14px;}
+  .back{font-family:var(--mono);font-size:12.5px;text-decoration:none;color:var(--ink-2);padding:7px 13px;border:1px solid var(--line);border-radius:6px;background:var(--panel);transition:.16s;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  .brand{font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;gap:10px;}
+  .brand .vs{background:var(--ink);color:var(--paper);padding:3px 7px;border-radius:4px;font-size:12px;}
+  @media(max-width:640px){.brand{display:none;}}
+  .hero{padding:48px 0 8px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--risk);}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(1.9rem,4.3vw,2.8rem);letter-spacing:-.02em;margin:12px 0 0;line-height:1.04;}
+  .headline{background:var(--ink);color:var(--paper);border-radius:12px;padding:22px 24px;margin:22px 0 8px;font-family:var(--display);font-weight:500;font-size:1.15rem;line-height:1.4;}
+  .headline b{color:#e98a7d;}
+  .doc{padding:20px 0 60px;}
+  .doc h2{font-family:var(--display);font-weight:600;font-size:1.3rem;letter-spacing:-.01em;margin:36px 0 12px;padding-top:20px;border-top:1px solid var(--line);}
+  .doc h2:first-of-type{border-top:none;padding-top:0;}
+  .doc p{color:var(--ink-2);margin:10px 0;}
+  .doc b,.doc strong{color:var(--ink);font-weight:600;}
+  .doc ol{margin:10px 0 10px 20px;color:var(--ink-2);}
+  .doc ol li{margin-bottom:8px;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+  @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px;}
+  .card .l{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+  .card .v{font-family:var(--display);font-weight:700;font-size:1.5rem;margin-top:6px;}
+  .card .v.risk{color:var(--risk);}
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+  @media(max-width:640px){.tools{grid-template-columns:1fr;}}
+  .tool{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px;text-decoration:none;transition:.16s;}
+  .tool:hover{border-color:var(--ink);}
+  .tool .t{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--risk);}
+  .tool .d{font-size:13px;color:var(--ink-2);margin-top:4px;}
+  .links{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;}
+  .links a{font-family:var(--mono);font-size:11.5px;text-decoration:none;padding:9px 13px;border:1px solid var(--ink);border-radius:6px;transition:.16s;}
+  .links a.solid{background:var(--ink);color:var(--paper);}
+  .links a.solid:hover{background:var(--risk);border-color:var(--risk);}
+  .links a.hollow{color:var(--ink);}
+  .links a.hollow:hover{background:var(--ink);color:var(--paper);}
+  footer{border-top:1px solid var(--line);padding:24px 0 44px;font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+  ::selection{background:var(--ink);color:var(--paper);}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="back" href="../../../index.html">← Back to portfolio</a>
+  <div class="brand"><span class="vs">VS</span> Case Study</div>
+</div></div>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Credit Risk · Federal Reserve 2026 CCAR / DFAST</div>
+    <h1>Stress-Testing a $35B Mortgage Book Under a Fed Recession</h1>
+    <div class="headline">On a $35.4B, 147,609-loan book, projected 13-quarter loss = <b>0.18% baseline ($65M)</b> vs <b>0.99% severely adverse ($352M)</b> — severely-adverse losses run <b>5.5× baseline</b>.</div>
+  </section>
+
+  <div class="doc">
+    <h2>The result</h2>
+    <div class="kpis">
+      <div class="card"><div class="l">Out-of-time Gini</div><div class="v">0.66</div></div>
+      <div class="card"><div class="l">Severe ÷ base loss</div><div class="v risk">5.5×</div></div>
+      <div class="card"><div class="l">Severe loss</div><div class="v">$352M</div></div>
+      <div class="card"><div class="l">Real mortgages</div><div class="v">350K+</div></div>
+    </div>
+
+    <h2>Why this project</h2>
+    <p>Banks subject to the Dodd-Frank Act Stress Test (DFAST) must show their regulator how their loan book would perform under a hypothetical severe recession. This project reproduces that workflow end-to-end on <b>real public mortgage data</b>: build a calibrated PD model, link it to macroeconomic drivers, and roll the book forward quarter-by-quarter under the Fed's published 2026 scenarios — reporting the result in <b>dollars and loss-rate</b>, the way a risk committee reads it.</p>
+
+    <h2>How it works</h2>
+    <ol>
+      <li><b>Data engineering (DuckDB).</b> 350K real Freddie Mac loans, 19M loan-month records queried directly in DuckDB. Default = 180+ DPD or credit-event; prepayment is a competing risk.</li>
+      <li><b>PD model.</b> Logistic benchmark + XGBoost challenger, validated out-of-time by vintage, scored on Gini/KS/PR-AUC, isotonic-calibrated, explained with SHAP.</li>
+      <li><b>Macro linkage.</b> A discrete-time hazard where the per-quarter default hazard depends on loan age, features, unemployment, and a mark-to-market LTV (the house-price channel).</li>
+      <li><b>Stress projection.</b> Roll the hazard forward 13 quarters under the Fed's baseline vs severely-adverse macro paths, accounting for competing prepayment.</li>
+      <li><b>LGD &amp; Expected Loss.</b> EL = PD × LGD × EAD, aggregated per scenario into the headline loss numbers.</li>
+    </ol>
+
+    <h2>Built with — one analysis, five toolchains</h2>
+    <p>The core workflow is reproduced across the stacks a bank actually uses:</p>
+    <div class="tools">
+      <a class="tool" href="../sql/analytics.sql" target="_blank"><span class="t">SQL</span><span class="d">Window functions, CTEs, vintage seasoning curves &amp; segment analysis on 19M rows (DuckDB)</span></a>
+      <a class="tool" href="../sas/pd_model.sas" target="_blank"><span class="t">SAS</span><span class="d">PROC LOGISTIC PD model + AUC/Gini/KS, PROC SQL — runs on SAS OnDemand</span></a>
+      <a class="tool" href="../R/glm_crosscheck.R" target="_blank"><span class="t">R</span><span class="d">glm() logistic + pROC validation, cross-checked against Python</span></a>
+      <a class="tool" href="../excel/Stress_Test_Results.xlsx" download><span class="t">Excel ↓</span><span class="d">Formatted results, conditional formatting &amp; a formula-driven live stress calculator</span></a>
+      <a class="tool" href="powerbi/" target="_blank"><span class="t">Power BI</span><span class="d">Star-schema export (fact + dimensions) + build guide for Power BI Service</span></a>
+      <a class="tool" href="../src" target="_blank"><span class="t">Python</span><span class="d">DuckDB pipeline, scikit-learn, statsmodels, XGBoost, SHAP, PCA/K-Means</span></a>
+    </div>
+
+    <div class="links">
+      <a class="solid" href="mortgage.html">▶ Launch the live dashboard</a>
+      <a class="hollow" href="model-card-mortgage.html">Model card</a>
+      <a class="hollow" href="https://github.com/vaibhavsethi01/mortgage-stress-testing-engine" target="_blank" rel="noopener">Code repository</a>
+    </div>
+    <p style="font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:16px;">Fed scenarios are hypothetical regulatory scenarios, not forecasts. Freddie raw loan data is not redistributed (license).</p>
+  </div>
+
+  <footer>Case study · Mortgage Stress-Testing Engine · Vaibhav Sethi.</footer>
+</div>
+</body>
+</html>

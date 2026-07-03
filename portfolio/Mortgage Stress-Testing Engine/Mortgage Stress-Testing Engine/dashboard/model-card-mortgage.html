@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Card — Mortgage Stress-Testing Engine · Vaibhav Sethi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#e9ecef;--panel:#fff;--panel-2:#f4f6f8;--ink:#14171a;--ink-2:#474e56;--ink-3:#838c95;--line:#d7dce1;--line-2:#e6eaee;--risk:#c0392b;--safe:#1f8a5b;--warn:#cf8a1e;--display:"Space Grotesk",sans-serif;--body:"IBM Plex Sans",sans-serif;--mono:"IBM Plex Mono",monospace;--maxw:820px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(233,236,239,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{display:flex;align-items:center;justify-content:space-between;height:58px;max-width:var(--maxw);margin:0 auto;padding:0 28px;gap:14px;}
+  .back{font-family:var(--mono);font-size:12.5px;text-decoration:none;color:var(--ink-2);padding:7px 13px;border:1px solid var(--line);border-radius:6px;background:var(--panel);transition:.16s;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  .brand{font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;gap:10px;}
+  .brand .vs{background:var(--ink);color:var(--paper);padding:3px 7px;border-radius:4px;font-size:12px;}
+  @media(max-width:640px){.brand{display:none;}}
+  .hero{padding:48px 0 8px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--risk);}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.02em;margin:12px 0 0;line-height:1.05;}
+  .meta{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:14px;line-height:1.9;}
+  .meta span{color:var(--ink-2);}
+  .doc{padding:26px 0 60px;}
+  .doc h2{font-family:var(--display);font-weight:600;font-size:1.3rem;letter-spacing:-.01em;margin:38px 0 12px;padding-top:20px;border-top:1px solid var(--line);}
+  .doc h2:first-of-type{border-top:none;padding-top:0;}
+  .doc p{color:var(--ink-2);margin:10px 0;}
+  .doc b,.doc strong{color:var(--ink);font-weight:600;}
+  .doc ul{margin:10px 0 10px 4px;list-style:none;}
+  .doc li{color:var(--ink-2);padding-left:18px;position:relative;margin-bottom:6px;}
+  .doc li::before{content:"›";position:absolute;left:2px;color:var(--risk);}
+  code{font-family:var(--mono);font-size:.86em;background:var(--panel-2);padding:1px 5px;border-radius:4px;color:var(--ink);}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+  @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 16px;}
+  .card .l{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+  .card .v{font-family:var(--display);font-weight:700;font-size:1.5rem;margin-top:6px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0;}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line-2);}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+  td.n{font-family:var(--mono);text-align:right;color:var(--ink);}
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--risk);border-radius:8px;padding:16px 18px;margin:18px 0;font-size:14.5px;color:var(--ink-2);}
+  .note{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:6px;}
+  footer{border-top:1px solid var(--line);padding:24px 0 44px;font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+  ::selection{background:var(--ink);color:var(--paper);}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="back" href="../../../index.html">← Back to portfolio</a>
+  <div class="brand"><span class="vs">VS</span> Model Card</div>
+</div></div>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Governance · Model Card (SR 11-7 style)</div>
+    <h1>Mortgage Stress-Testing Engine — Model Card</h1>
+    <div class="meta">
+      MODEL <span>PD (logistic + XGBoost) + discrete-time hazard</span> · VERSION <span>1.0</span><br>
+      OWNER <span>Vaibhav Sethi</span> · DATA <span>Freddie Mac SFLLD (real)</span> · SCENARIOS <span>Fed 2026 DFAST</span>
+    </div>
+  </section>
+
+  <div class="doc">
+    <h2>1 · Purpose &amp; intended use</h2>
+    <p>Estimate mortgage probability of default and project portfolio default and loss over a 13-quarter horizon under the Federal Reserve's 2026 baseline and severely-adverse supervisory scenarios (CCAR/DFAST-style). Intended as a portfolio-analytics / educational demonstration — <b>not</b> a deployed credit-decisioning system and not used to make lending decisions.</p>
+
+    <h2>2 · Data</h2>
+    <ul>
+      <li><b>Source:</b> Freddie Mac Single-Family Loan-Level Dataset (real).</li>
+      <li><b>Cohorts:</b> 2005–2008 (crisis) + 2017–2019 (COVID) origination vintages — <b>350,000 loans, 19M loan-month records</b>.</li>
+      <li><b>Target:</b> default = ever 180+ DPD (delinquency ≥ 6) or credit-event zero-balance code (<code>02/03/09/15</code>); prepayment (<code>01</code>) is a competing risk.</li>
+      <li><b>Macro covariates:</b> unemployment rate, HPI growth, 30-yr mortgage rate (FRED).</li>
+    </ul>
+
+    <h2>3 · Features</h2>
+    <p>FICO, original LTV / CLTV / DTI, original rate, original UPB, loan purpose, occupancy, property type, units, borrowers, first-time-buyer flag, channel, property state, origination vintage. Sentinel codes (9999 FICO, 999 LTV/DTI) handled explicitly. The hazard track adds loan age and calendar-quarter macro values, plus a mark-to-market (current) LTV.</p>
+
+    <h2>4 · Evaluation (out-of-time, by vintage)</h2>
+    <p>Test = 2007/2008/2019 vintages (train = 2005/06/17/18). Credit-risk metrics, not accuracy:</p>
+    <table>
+      <tr><th>Metric</th><th style="text-align:right">Logistic</th><th style="text-align:right">XGBoost</th><th style="text-align:right">Calibrated</th></tr>
+      <tr><td>ROC AUC</td><td class="n">0.829</td><td class="n">0.830</td><td class="n">0.830</td></tr>
+      <tr><td>Gini (2·AUC−1)</td><td class="n">0.657</td><td class="n">0.660</td><td class="n">0.660</td></tr>
+      <tr><td>KS statistic</td><td class="n">0.504</td><td class="n">0.504</td><td class="n">0.503</td></tr>
+      <tr><td>PR-AUC (base 8.1%)</td><td class="n">0.330</td><td class="n">0.337</td><td class="n">0.335</td></tr>
+      <tr><td>Brier</td><td class="n">—</td><td class="n">0.175</td><td class="n">0.064</td></tr>
+    </table>
+    <p>Overfit check: XGBoost in-sample AUC 0.858 vs out-of-time 0.830 — modest, healthy. Probabilities isotonic-calibrated (Brier 0.175 → 0.064).</p>
+
+    <h2>5 · Explainability</h2>
+    <p>TreeSHAP global importance. Top drivers: FICO, property state, original rate, DTI, LTV/CLTV. Sign check <b>confirmed</b> — correlation of each feature with its SHAP value: FICO <b>−0.97</b> (lower score → higher risk), OLTV <b>+0.92</b>, OCLTV +0.86, ODTI +0.91, original rate +0.90. All economically correct.</p>
+
+    <h2>6 · Stress-projection results</h2>
+    <p>As-of book = 2017–2019 cohort (147,609 loans, $35.4B UPB); 13-quarter horizon; discrete-time hazard rolled forward under Fed 2026 macro paths; LGD 30%.</p>
+    <table>
+      <tr><th>Scenario</th><th style="text-align:right">Cum. default</th><th style="text-align:right">Loss rate</th><th style="text-align:right">Expected loss</th></tr>
+      <tr><td>Baseline</td><td class="n">0.61%</td><td class="n">0.18%</td><td class="n">$65M</td></tr>
+      <tr><td>Severely adverse</td><td class="n">3.28%</td><td class="n">0.99%</td><td class="n">$352M</td></tr>
+    </table>
+    <div class="callout">Severely-adverse losses = <b>5.5× baseline</b>. Peak quarterly default 0.38% (severe) vs 0.05% (baseline). Drivers: unemployment 4.5%→10% and house prices −30% raise the mark-to-market-LTV and unemployment terms in the hazard.</div>
+    <p class="note">LGD note: the 50k-loan annual sample under-populates final-disposition loss fields (~257 defaults with a clean realized loss), so a documented ~30% mortgage LGD is used rather than an unreliable empirical estimate.</p>
+
+    <h2>7 · Limitations &amp; failure modes</h2>
+    <ul>
+      <li>Trained on Freddie <b>conforming</b> loans — does not represent subprime, jumbo, or non-QM books.</li>
+      <li>Freddie data has <b>no protected-class fields</b>; no fair-lending (ECOA) audit is claimed (would require HMDA join — future work).</li>
+      <li>Macro link is reduced-form (captures unemployment/HPI/rate, not credit-spread or CRE shocks).</li>
+      <li>Scenarios are <b>hypothetical regulatory scenarios, not forecasts</b>. The web simulator is illustrative, not a deployed model.</li>
+    </ul>
+
+    <h2>8 · Reproducibility</h2>
+    <p><code>random_state = 42</code> throughout; pinned <code>requirements.txt</code>; deterministic loan sampling by hashed Loan Sequence Number.</p>
+  </div>
+
+  <footer>Model card · Mortgage Stress-Testing Engine · Vaibhav Sethi · <a href="mortgage.html" style="color:var(--ink-2)">view the live dashboard →</a></footer>
+</div>
+</body>
+</html>

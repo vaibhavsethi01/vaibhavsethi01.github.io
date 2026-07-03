@@ -1,0 +1,13 @@
+# Severely Adverse — pinned dependencies (Python 3.11+ recommended)
+# Install:  python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+duckdb==1.5.3
+pandas==2.3.3
+numpy==2.2.6
+pyarrow==24.0.0
+scikit-learn==1.7.2
+statsmodels==0.14.6
+xgboost==3.2.0
+shap==0.49.1
+matplotlib==3.10.9
+plotly==6.8.0
+fredapi==0.5.2

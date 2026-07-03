@@ -1,0 +1,22 @@
+{
+  "portfolio_upb_usd": 35446498000,
+  "lgd": {
+    "method": "assumed_30pct",
+    "lgd": 0.3,
+    "empirical_lgd_unreliable": 0.0559,
+    "n_disposed_with_loss": 257,
+    "note": "realized-loss fields too sparse in the 50k annual sample (<1000 disposed-with-loss); using documented ~30% mortgage LGD. Re-estimate on the full Standard dataset for an empirical figure."
+  },
+  "horizon_quarters": 13,
+  "baseline": {
+    "cumulative_default_rate_pct": 0.61,
+    "cumulative_loss_rate_pct": 0.18,
+    "expected_loss_usd": 65211137
+  },
+  "severely_adverse": {
+    "cumulative_default_rate_pct": 3.28,
+    "cumulative_loss_rate_pct": 0.99,
+    "expected_loss_usd": 352327872
+  },
+  "loss_multiple_severe_vs_base": 5.5
+}

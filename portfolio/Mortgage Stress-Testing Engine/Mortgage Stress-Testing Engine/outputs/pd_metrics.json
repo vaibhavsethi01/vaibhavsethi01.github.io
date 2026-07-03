@@ -1,0 +1,41 @@
+{
+  "logistic_test_oot": {
+    "roc_auc": 0.8286,
+    "gini": 0.6572,
+    "ks": 0.5037,
+    "pr_auc": 0.3303,
+    "base_rate": 0.0814
+  },
+  "xgboost_train_insample": {
+    "roc_auc": 0.8584,
+    "gini": 0.7168,
+    "ks": 0.5535,
+    "pr_auc": 0.3273,
+    "base_rate": 0.0697
+  },
+  "xgboost_test_oot": {
+    "roc_auc": 0.8302,
+    "gini": 0.6605,
+    "ks": 0.5035,
+    "pr_auc": 0.3372,
+    "base_rate": 0.0814
+  },
+  "xgboost_calibrated_test_oot": {
+    "roc_auc": 0.8298,
+    "gini": 0.6596,
+    "ks": 0.5027,
+    "pr_auc": 0.3354,
+    "base_rate": 0.0814
+  },
+  "brier_uncalibrated": 0.17537,
+  "brier_calibrated": 0.06354,
+  "n_train": 200000,
+  "n_test": 149999,
+  "shap_sign_check": {
+    "fico": -0.972,
+    "oltv": 0.917,
+    "ocltv": 0.858,
+    "odti": 0.913,
+    "orig_rate": 0.899
+  }
+}

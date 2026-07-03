@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Case — Banking Risk Platform · Vaibhav Sethi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#e9ecef;--panel:#fff;--panel-2:#f4f6f8;--ink:#14171a;--ink-2:#474e56;--ink-3:#838c95;--line:#d7dce1;--line-2:#e6eaee;--risk:#c0392b;--safe:#1f8a5b;--warn:#cf8a1e;--display:"Space Grotesk",sans-serif;--body:"IBM Plex Sans",sans-serif;--mono:"IBM Plex Mono",monospace;--maxw:820px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(233,236,239,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{display:flex;align-items:center;justify-content:space-between;height:58px;max-width:var(--maxw);margin:0 auto;padding:0 28px;gap:14px;}
+  .back{font-family:var(--mono);font-size:12.5px;text-decoration:none;color:var(--ink-2);padding:7px 13px;border:1px solid var(--line);border-radius:6px;background:var(--panel);transition:.16s;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  .brand{font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;gap:10px;}
+  .brand .vs{background:var(--ink);color:var(--paper);padding:3px 7px;border-radius:4px;font-size:12px;}
+  @media(max-width:640px){.brand{display:none;}}
+  .hero{padding:48px 0 8px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--risk);}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.02em;margin:12px 0 0;line-height:1.05;}
+  .hero p{color:var(--ink-2);margin-top:14px;font-size:1.02rem;}
+  .doc{padding:26px 0 60px;}
+  .doc h2{font-family:var(--display);font-weight:600;font-size:1.3rem;letter-spacing:-.01em;margin:38px 0 12px;padding-top:20px;border-top:1px solid var(--line);}
+  .doc h2:first-of-type{border-top:none;padding-top:0;}
+  .doc p{color:var(--ink-2);margin:10px 0;}
+  .doc b,.doc strong{color:var(--ink);font-weight:600;}
+  .doc ul{margin:10px 0 10px 4px;list-style:none;}
+  .doc li{color:var(--ink-2);padding-left:18px;position:relative;margin-bottom:6px;}
+  .doc li::before{content:"›";position:absolute;left:2px;color:var(--risk);}
+  .doc li b{color:var(--ink);}
+  .statstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+  @media(max-width:640px){.statstrip{grid-template-columns:repeat(2,1fr);}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:16px;}
+  .stat .num{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--safe);letter-spacing:-.02em;}
+  .stat .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-top:6px;line-height:1.4;}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+  @media(max-width:640px){.split{grid-template-columns:1fr;}}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:16px 18px;}
+  .box h4{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--risk);margin-bottom:8px;}
+  footer{border-top:1px solid var(--line);padding:24px 0 44px;font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+  ::selection{background:var(--ink);color:var(--paper);}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <a class="back" href="banking.html">← Back to Banking Risk Platform</a>
+  <div class="brand"><span class="vs">VS</span> Business Case</div>
+</div></div>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Strategy · Business Case</div>
+    <h1>Banking Risk &amp; Credit Decision Platform</h1>
+    <p>Bridging advanced analytics with real-world lending decisions — balancing profitability and regulatory compliance.</p>
+  </section>
+
+  <div class="doc">
+    <h2>1 · Background</h2>
+    <p>Banks operate in constant tension between <b>growth</b> (approving more loans) and <b>risk management</b> (controlling defaults and capital provisions). Traditional rule-based scoring often misses the complex, dynamic patterns in borrower behavior. This platform provides a data-driven, adaptive solution that estimates <b>probability of default (PD)</b> per applicant, enables risk-adjusted decisions, and delivers portfolio-level monitoring for stress testing and capital planning.</p>
+
+    <h2>2 · Problem statement</h2>
+    <ul>
+      <li><b>High defaults</b> erode profitability and raise loan-loss provisions</li>
+      <li><b>Overly conservative lending</b> constrains growth and market share</li>
+      <li><b>Regulatory scrutiny</b> demands explainable, auditable credit decisions</li>
+    </ul>
+
+    <h2>3 · Solution overview</h2>
+    <ul>
+      <li><b>Data pipeline</b> — automated ingestion and cleaning of borrower, bureau, and transactional data</li>
+      <li><b>ML models</b> — logistic regression + XGBoost ensemble for robust PD estimates</li>
+      <li><b>Threshold tuning</b> — cutoffs aligned to the institution's risk appetite</li>
+      <li><b>Evaluation</b> — AUC, KS-statistic, precision/recall, cost-sensitive metrics</li>
+      <li><b>Interactive dashboard</b> — applicant- and portfolio-level insight for credit officers and CROs</li>
+    </ul>
+
+    <h2>4 · Business applications</h2>
+    <div class="split">
+      <div class="box"><h4>Loan origination</h4>High-risk → decline or require collateral. Medium-risk → approve at adjusted rates / lower limits. Low-risk → approve at standard terms to maximize growth.</div>
+      <div class="box"><h4>Portfolio risk</h4>Real-time monitoring of the default-risk distribution and scenario analysis under adverse macro conditions (recession, rate hikes).</div>
+    </div>
+    <p>Regulatory &amp; audit: interpretable models (logistic regression, SHAP) ensure transparency and support <b>IFRS 9 / Basel III</b> capital calculations.</p>
+
+    <h2>5 · Strategic benefits</h2>
+    <p>Quantified from pilot simulations:</p>
+    <div class="statstrip">
+      <div class="stat"><div class="num">10–15%</div><div class="lbl">Fewer defaults</div></div>
+      <div class="stat"><div class="num">5–8%</div><div class="lbl">More approvals</div></div>
+      <div class="stat"><div class="num">30%</div><div class="lbl">Faster underwriting</div></div>
+      <div class="stat"><div class="num">Audit-ready</div><div class="lbl">Compliance</div></div>
+    </div>
+
+    <h2>6 · Business trade-offs</h2>
+    <ul>
+      <li><b>Risk-averse</b> → lower thresholds, fewer defaults, slower growth</li>
+      <li><b>Growth-focused</b> → higher thresholds, more approvals, more default exposure</li>
+    </ul>
+    <p>Decision-makers can simulate scenarios and align lending policy with strategic priorities and macro conditions.</p>
+
+    <h2>7 · Future roadmap</h2>
+    <ul>
+      <li><b>Dynamic credit-limit recommendation</b> — optimize loan amounts in real time</li>
+      <li><b>Fairness &amp; bias monitoring</b> — detect and mitigate demographic bias</li>
+      <li><b>Alternative data</b> — mobile payments, utility bills, social signals for thin-file borrowers</li>
+      <li><b>Fraud-risk layer</b> and <b>ESG-linked credit risk</b></li>
+    </ul>
+
+    <h2>8 · Conclusion</h2>
+    <p>The platform shows how machine learning can turn credit-risk management into a <b>strategic, compliant, and profit-driving</b> function — scaling growth sustainably, strengthening resilience against defaults, and building regulator and customer trust.</p>
+  </div>
+
+  <footer>Business case · Banking Risk Platform · Vaibhav Sethi.</footer>
+</div>
+</body>
+</html>

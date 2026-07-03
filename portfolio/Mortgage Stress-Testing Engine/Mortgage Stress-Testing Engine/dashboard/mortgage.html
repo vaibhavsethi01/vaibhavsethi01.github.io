@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Stress-Testing Engine — Vaibhav Sethi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+  :root{
+    --paper:#e9ecef; --panel:#ffffff; --panel-2:#f4f6f8;
+    --ink:#14171a; --ink-2:#474e56; --ink-3:#838c95;
+    --line:#d7dce1; --line-2:#e6eaee;
+    --risk:#c0392b; --safe:#1f8a5b; --warn:#cf8a1e;
+    --display:"Space Grotesk",-apple-system,sans-serif;
+    --body:"IBM Plex Sans",-apple-system,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+
+  /* TOPBAR */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(233,236,239,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{display:flex;align-items:center;justify-content:space-between;height:58px;gap:16px;}
+  .back{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-decoration:none;color:var(--ink-2);display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid var(--line);border-radius:6px;background:var(--panel);transition:all .16s;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  .brand{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.04em;display:flex;align-items:center;gap:10px;color:var(--ink);}
+  .brand .vs{background:var(--ink);color:var(--paper);padding:3px 7px;border-radius:4px;font-size:12px;letter-spacing:.08em;}
+  .status{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ink-2);letter-spacing:.05em;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--safe);animation:pulse 2.4s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,138,91,.45);}70%{box-shadow:0 0 0 6px rgba(31,138,91,0);}100%{box-shadow:0 0 0 0 rgba(31,138,91,0);}}
+  @media(max-width:720px){.brand{display:none;}}
+
+  /* HERO */
+  .hero{padding:46px 0 26px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--risk);font-weight:500;}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.03;letter-spacing:-.02em;margin:14px 0 0;}
+  .hero p{font-size:1.04rem;color:var(--ink-2);margin-top:16px;max-width:64ch;line-height:1.6;}
+  .hero p b{color:var(--ink);font-weight:600;}
+  .prov{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:14px;letter-spacing:.03em;}
+
+  /* KPI CARDS */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:30px 0 8px;}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;box-shadow:0 1px 0 #fff inset;}
+  .card .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);}
+  .card .val{font-family:var(--display);font-weight:700;font-size:1.9rem;letter-spacing:-.02em;margin-top:8px;line-height:1;}
+  .card .note{font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:8px;}
+  .val.base{color:var(--safe);} .val.sev{color:var(--risk);} .val.acc{color:var(--ink);}
+
+  /* TABS + TOGGLE */
+  .tabs{display:flex;gap:8px;margin:26px 0 20px;}
+  .tab{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:9px 16px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink-2);cursor:pointer;transition:all .15s;}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .toggle{display:inline-flex;gap:5px;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;padding:4px;}
+  .toggle button{font-family:var(--mono);font-size:11px;letter-spacing:.04em;background:transparent;border:0;color:var(--ink-3);padding:6px 12px;border-radius:5px;cursor:pointer;}
+  .toggle button.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+  /* PANELS */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:18px;}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;}
+  .panel-h h3{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:-.01em;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr;}}
+  canvas{max-height:300px;}
+  .hide{display:none;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line-2);}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600;}
+  td.num{font-family:var(--mono);text-align:right;color:var(--ink-2);}
+
+  /* SIMULATOR */
+  .simrow{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center;margin-bottom:6px;}
+  @media(max-width:620px){.simrow{grid-template-columns:1fr;}}
+  .slider label{display:block;font-family:var(--body);font-size:13.5px;color:var(--ink-2);margin-bottom:8px;}
+  .slider label b{font-family:var(--mono);color:var(--risk);}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:5px;background:var(--line);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--ink);border:3px solid #fff;cursor:pointer;}
+  .simout{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 4px;}
+  @media(max-width:620px){.simout{grid-template-columns:1fr;}}
+  .disclaim{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:10px;line-height:1.6;}
+
+  footer{padding:28px 0 44px;}
+  .foot{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.03em;line-height:1.7;border-top:1px solid var(--line);padding-top:16px;}
+  ::selection{background:var(--ink);color:var(--paper);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <!-- BACK BUTTON — path for the current nested folders. If you flatten to
+         portfolio/mortgage/mortgage.html, change to "../index.html". -->
+    <a class="back" href="../../../index.html">← Back to portfolio</a>
+    <div class="brand"><span class="vs">VS</span> Mortgage Stress-Testing Engine</div>
+    <div class="status"><span class="dot"></span> MODEL · LIVE</div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Credit Risk · Federal Reserve 2026 CCAR / DFAST</div>
+    <h1>Mortgage Stress-Testing Engine</h1>
+    <p>A loan-level probability-of-default model on <b>350K+ real Freddie Mac mortgages</b>, projected forward under the Federal Reserve's 2026 baseline and severely-adverse recession scenarios — the same supervisory exercise banks run for their regulator. Toggle the scenarios, or drag the shock sliders in the simulator.</p>
+    <div class="prov" id="prov"></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="dash">Loss Dashboard</div>
+    <div class="tab" data-tab="sim">Stress Simulator</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section id="dash">
+    <div class="kpis">
+      <div class="card"><div class="lbl">Baseline loss rate</div><div class="val base" id="k_base">–</div><div class="note" id="k_base_usd"></div></div>
+      <div class="card"><div class="lbl">Severely-adverse loss</div><div class="val sev" id="k_sev">–</div><div class="note" id="k_sev_usd"></div></div>
+      <div class="card"><div class="lbl">Severe ÷ baseline</div><div class="val acc" id="k_mult">–</div><div class="note">loss multiple</div></div>
+      <div class="card"><div class="lbl">Portfolio</div><div class="val acc" id="k_port">–</div><div class="note" id="k_port_note"></div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3>Cumulative portfolio loss · 13-quarter horizon</h3>
+        <div class="toggle" id="scnToggle">
+          <button data-s="both" class="on">Both</button>
+          <button data-s="baseline">Baseline</button>
+          <button data-s="severely_adverse">Severe</button>
+        </div>
+      </div>
+      <canvas id="lossChart"></canvas>
+    </div>
+
+    <div class="grid2">
+      <div class="panel"><div class="panel-h"><h3>Loss by FICO band (severe)</h3></div><canvas id="ficoChart"></canvas></div>
+      <div class="panel"><div class="panel-h"><h3>Loss by original LTV band (severe)</h3></div><canvas id="ltvChart"></canvas></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><div class="panel-h"><h3>Quarterly default rate</h3></div><canvas id="defChart"></canvas></div>
+      <div class="panel"><div class="panel-h"><h3>Top states by expected loss (severe)</h3></div>
+        <table id="stateTbl"><thead><tr><th>State</th><th style="text-align:right">Loss rate</th><th style="text-align:right">Exp. loss</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIMULATOR -->
+  <section id="sim" class="hide">
+    <div class="panel">
+      <div class="panel-h"><h3>Interactive stress simulator</h3></div>
+      <p style="color:var(--ink-2);font-size:14.5px;margin-bottom:18px;">Drag the sliders to shock the macro environment. Projected loss updates live from the <em>fitted</em> discrete-time hazard on a representative loan. <b>Illustrative</b> — driven by the fitted model, not a deployed system.</p>
+      <div class="simrow">
+        <div class="slider"><label>Unemployment-rate peak: <b id="uv">10.0%</b></label><input type="range" id="us" min="4.5" max="15" step="0.1" value="10"></div>
+        <div class="slider"><label>House-price decline (peak-to-trough): <b id="hv">30%</b></label><input type="range" id="hs" min="0" max="50" step="1" value="30"></div>
+      </div>
+      <div class="simout">
+        <div class="card"><div class="lbl">Cumulative default</div><div class="val acc" id="s_def">–</div></div>
+        <div class="card"><div class="lbl">Portfolio loss rate</div><div class="val sev" id="s_loss">–</div></div>
+        <div class="card"><div class="lbl">Expected loss ($)</div><div class="val acc" id="s_usd">–</div></div>
+      </div>
+      <div class="disclaim">Reference: the Fed's 2026 severely-adverse scenario peaks unemployment at 10% and house prices −30% (the slider defaults). Scenarios are hypothetical regulatory scenarios, not forecasts.</div>
+    </div>
+    <div class="panel"><div class="panel-h"><h3>Projected cumulative loss path</h3></div><canvas id="simChart"></canvas></div>
+  </section>
+
+  <footer><div class="foot" id="foot"></div></footer>
+</div>
+
+<script>
+const D = window.DASH_DATA;
+const C = {base:'#1f8a5b', sev:'#c0392b', acc:'#14171a', grid:'#e6eaee', ink2:'#474e56'};
+const fmtUsd = v => '$' + (v>=1e9 ? (v/1e9).toFixed(1)+'B' : (v/1e6).toFixed(0)+'M');
+Chart.defaults.color = C.ink2; Chart.defaults.borderColor = C.grid;
+Chart.defaults.font.family = "IBM Plex Sans, sans-serif"; Chart.defaults.font.size = 12;
+
+document.getElementById('k_base').textContent = D.kpi.baseline_loss_pct + '%';
+document.getElementById('k_base_usd').textContent = fmtUsd(D.kpi.baseline_loss_usd) + ' · ' + D.kpi.baseline_default_pct + '% default';
+document.getElementById('k_sev').textContent = D.kpi.severe_loss_pct + '%';
+document.getElementById('k_sev_usd').textContent = fmtUsd(D.kpi.severe_loss_usd) + ' · ' + D.kpi.severe_default_pct + '% default';
+document.getElementById('k_mult').textContent = D.kpi.multiple + '×';
+document.getElementById('k_port').textContent = fmtUsd(D.meta.portfolio_upb);
+document.getElementById('k_port_note').textContent = D.meta.n_loans.toLocaleString() + ' loans · ' + D.meta.cohort;
+document.getElementById('prov').textContent =
+  D.meta.n_all_loans.toLocaleString() + ' real Freddie Mac loans · ' + (D.meta.n_loanmonths/1e6).toFixed(1) +
+  'M loan-month records · out-of-time PD Gini ' + D.meta.pd_gini + ' · LGD ' + (D.meta.lgd*100) + '%';
+document.getElementById('foot').innerHTML =
+  'Built by Vaibhav Sethi · Python · SQL · SAS · R · DuckDB · XGBoost · SHAP. Fed 2026 DFAST scenarios (hypothetical, not forecasts). Freddie raw data not redistributed (license).';
+
+const ts = D.timeseries, q = ts.baseline.quarter;
+const lossChart = new Chart(document.getElementById('lossChart'), {
+  type:'line',
+  data:{labels:q, datasets:[
+    {label:'Baseline', data:ts.baseline.cum_loss_pct, borderColor:C.base, backgroundColor:C.base+'1a', tension:.25, fill:true, pointRadius:0},
+    {label:'Severely adverse', data:ts.severely_adverse.cum_loss_pct, borderColor:C.sev, backgroundColor:C.sev+'1a', tension:.25, fill:true, pointRadius:0},
+  ]},
+  options:{plugins:{legend:{labels:{usePointStyle:true,boxWidth:8}}},
+    scales:{y:{title:{display:true,text:'Cumulative loss (%)'},grid:{color:C.grid}},x:{grid:{display:false}}}}
+});
+document.querySelectorAll('#scnToggle button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#scnToggle button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); const s=b.dataset.s;
+  lossChart.data.datasets[0].hidden = (s==='severely_adverse');
+  lossChart.data.datasets[1].hidden = (s==='baseline');
+  lossChart.update();
+});
+
+new Chart(document.getElementById('defChart'),{type:'line',
+  data:{labels:q,datasets:[
+    {label:'Baseline',data:ts.baseline.quarterly_default_pct,borderColor:C.base,tension:.25,pointRadius:0},
+    {label:'Severely adverse',data:ts.severely_adverse.quarterly_default_pct,borderColor:C.sev,tension:.25,pointRadius:0}]},
+  options:{plugins:{legend:{labels:{usePointStyle:true,boxWidth:8}}},scales:{y:{title:{display:true,text:'Quarterly default (%)'},grid:{color:C.grid}},x:{grid:{display:false}}}}});
+
+function segBars(dim, canvas, order){
+  const rows = D.segments.filter(r=>r.dimension===dim && r.scenario==='severely_adverse');
+  rows.sort((a,b)=> order ? order.indexOf(a.segment)-order.indexOf(b.segment) : b.loss_rate_pct-a.loss_rate_pct);
+  new Chart(document.getElementById(canvas),{type:'bar',
+    data:{labels:rows.map(r=>r.segment),datasets:[{data:rows.map(r=>+r.loss_rate_pct.toFixed(2)),backgroundColor:C.sev+'cc',borderRadius:3}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Loss rate (%)'},grid:{color:C.grid}},x:{grid:{display:false}}}}});
+}
+segBars('fico_band','ficoChart',['<620','620-659','660-699','700-739','740-779','780+']);
+segBars('ltv_band','ltvChart',['<=60','61-70','71-80','81-90','91+']);
+
+const stRows = D.segments.filter(r=>r.dimension==='state' && r.scenario==='severely_adverse').sort((a,b)=>b.exp_loss-a.exp_loss).slice(0,10);
+document.querySelector('#stateTbl tbody').innerHTML = stRows.map(r=>
+  `<tr><td>${r.segment}</td><td class="num">${r.loss_rate_pct.toFixed(2)}%</td><td class="num">${fmtUsd(r.exp_loss)}</td></tr>`).join('');
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  document.getElementById('dash').classList.toggle('hide', t.dataset.tab!=='dash');
+  document.getElementById('sim').classList.toggle('hide', t.dataset.tab!=='sim');
+});
+
+// SIMULATOR
+const S = D.simulator;
+function hazard(age, unemp, currentLtv){
+  const f = {loan_age_q:age, loan_age_q_sq:age*age, fico:S.rep_loan.fico, current_ltv:currentLtv,
+             odti:S.rep_loan.odti, orig_rate:S.rep_loan.orig_rate, unemployment_rate:unemp};
+  let z = S.intercept;
+  S.features.forEach(k=>{ z += S.coef[k]*((f[k]-S.scaler_mean[k])/S.scaler_scale[k]); });
+  return 1/(1+Math.exp(-z));
+}
+const simChart = new Chart(document.getElementById('simChart'),{type:'line',
+  data:{labels:[...Array(S.horizon_q)].map((_,i)=>'Q'+(i+1)),
+    datasets:[{label:'Cumulative loss (%)',data:[],borderColor:C.sev,backgroundColor:C.sev+'1a',fill:true,tension:.25,pointRadius:0}]},
+  options:{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Cumulative loss (%)'},beginAtZero:true,grid:{color:C.grid}},x:{grid:{display:false}}}}});
+function runSim(){
+  const U = +document.getElementById('us').value, Dd = +document.getElementById('hs').value;
+  document.getElementById('uv').textContent = U.toFixed(1)+'%';
+  document.getElementById('hv').textContent = Dd+'%';
+  let survival=1, cumDef=0; const path=[];
+  for(let t=1;t<=S.horizon_q;t++){
+    const age = S.start_age_q + t;
+    const unemp = S.base_unemployment + (U-S.base_unemployment)*Math.min(t,7)/7;
+    const hpiIdx = 100*(1-(Dd/100)*Math.min(t,8)/8);
+    const currentLtv = Math.min(S.rep_loan.oltv*100/hpiIdx, 250);
+    const hd = hazard(age, unemp, currentLtv);
+    cumDef += survival*hd; survival *= Math.max(1-hd-S.prepay_hazard_q,0);
+    path.push(+(cumDef*S.lgd*100).toFixed(3));
+  }
+  const lossPct = cumDef*S.lgd*100;
+  document.getElementById('s_def').textContent = (cumDef*100).toFixed(2)+'%';
+  document.getElementById('s_loss').textContent = lossPct.toFixed(2)+'%';
+  document.getElementById('s_usd').textContent = fmtUsd(lossPct/100*D.meta.portfolio_upb);
+  simChart.data.datasets[0].data = path; simChart.update();
+}
+document.getElementById('us').oninput = runSim;
+document.getElementById('hs').oninput = runSim;
+runSim();
+</script>
+</body>
+</html>

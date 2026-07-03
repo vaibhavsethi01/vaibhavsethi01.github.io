@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banking Risk Platform — Vaibhav Sethi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#e9ecef; --panel:#ffffff; --panel-2:#f4f6f8;
+    --ink:#14171a; --ink-2:#474e56; --ink-3:#838c95;
+    --line:#d7dce1; --line-2:#e6eaee;
+    --risk:#c0392b; --risk-soft:#f3dad6; --safe:#1f8a5b; --safe-soft:#d6ece0; --warn:#cf8a1e; --warn-soft:#f4e7cd;
+    --display:"Space Grotesk",-apple-system,sans-serif;
+    --body:"IBM Plex Sans",-apple-system,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(233,236,239,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{display:flex;align-items:center;justify-content:space-between;height:58px;gap:16px;}
+  .back{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-decoration:none;color:var(--ink-2);display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid var(--line);border-radius:6px;background:var(--panel);transition:all .16s;}
+  .back:hover{border-color:var(--ink);color:var(--ink);}
+  .brand{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.04em;display:flex;align-items:center;gap:10px;color:var(--ink);}
+  .brand .vs{background:var(--ink);color:var(--paper);padding:3px 7px;border-radius:4px;font-size:12px;letter-spacing:.08em;}
+  .status{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ink-2);letter-spacing:.05em;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--safe);}
+  @media(max-width:720px){.brand{display:none;}}
+
+  .hero{padding:46px 0 26px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--risk);font-weight:500;}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.03;letter-spacing:-.02em;margin:14px 0 0;}
+  .hero p{font-size:1.04rem;color:var(--ink-2);margin-top:16px;max-width:64ch;line-height:1.6;}
+  .hero p b{color:var(--ink);font-weight:600;}
+  .prov{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:14px;letter-spacing:.03em;}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:30px 0 8px;}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;}
+  .card .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);}
+  .card .val{font-family:var(--display);font-weight:700;font-size:1.9rem;letter-spacing:-.02em;margin-top:8px;line-height:1;}
+  .card .note{font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:8px;}
+
+  .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;margin-top:8px;}
+  @media(max-width:860px){.grid{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:18px;}
+  .panel h3{font-family:var(--display);font-weight:600;font-size:1.05rem;margin-bottom:16px;}
+  .field{margin-bottom:14px;}
+  .field-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .field-top label{font-size:13.5px;color:var(--ink-2);}
+  .field-top .v{font-family:var(--mono);font-size:13.5px;font-weight:600;}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:5px;background:var(--line);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:17px;height:17px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;}
+  select{width:100%;font-family:var(--body);font-size:13.5px;padding:8px;border:1px solid var(--line);border-radius:6px;background:#fff;}
+  .readout{border-top:1px solid var(--line-2);margin-top:8px;padding-top:18px;display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center;}
+  @media(max-width:480px){.readout{grid-template-columns:1fr;}}
+  .gauge{text-align:center;}
+  .gauge .pd{font-family:var(--display);font-weight:700;font-size:2.6rem;letter-spacing:-.02em;line-height:1;}
+  .gauge .pdl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:4px;}
+  .verdict{display:flex;flex-direction:column;gap:10px;}
+  .decision{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em;padding:8px 12px;border-radius:5px;display:inline-block;width:fit-content;}
+  .el{font-family:var(--mono);font-size:13px;color:var(--ink-2);}
+  .el b{color:var(--ink);}
+  .why{border-top:1px solid var(--line-2);margin-top:16px;padding-top:14px;}
+  .why-h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;}
+  .why li{list-style:none;font-size:13.5px;color:var(--ink-2);padding-left:16px;position:relative;margin-bottom:5px;}
+  .why li::before{content:"›";position:absolute;left:2px;color:var(--risk);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  td,th{padding:8px 6px;border-bottom:1px solid var(--line-2);text-align:left;}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+  td.n{font-family:var(--mono);text-align:right;color:var(--ink-2);}
+  .links{display:flex;flex-wrap:wrap;gap:9px;}
+  .links a{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;text-decoration:none;padding:9px 13px;border:1px solid var(--ink);border-radius:6px;transition:all .16s;}
+  .links a.solid{background:var(--ink);color:var(--paper);}
+  .links a.solid:hover{background:var(--risk);border-color:var(--risk);}
+  .links a.hollow:hover{background:var(--ink);color:var(--paper);}
+  .disclaim{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:12px;line-height:1.6;}
+  footer{padding:26px 0 44px;}
+  .foot{font-family:var(--mono);font-size:11px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:16px;line-height:1.7;}
+  ::selection{background:var(--ink);color:var(--paper);}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap topbar-in">
+  <!-- BACK BUTTON — for the current nested location. If you move banking.html
+       next to index.html, change this to: index.html -->
+  <a class="back" href="../../../index.html">← Back to portfolio</a>
+  <div class="brand"><span class="vs">VS</span> Banking Risk Platform</div>
+  <div class="status"><span class="dot"></span> MODEL · LIVE</div>
+</div></div>
+
+<section class="hero"><div class="wrap">
+  <div class="eyebrow">Banking · Credit Scoring &amp; Expected Loss</div>
+  <h1>Banking Risk Platform</h1>
+  <p>An end-to-end credit-risk scoring platform: a calibrated <b>probability-of-default</b> model (XGBoost + Platt scaling), <b>SHAP</b> reason codes, and portfolio <b>expected-loss</b> analysis (PD × LGD × EAD) — built with banking governance in mind. Score an applicant below.</p>
+  <div class="prov">UCI Default-of-Credit-Card-Clients dataset · 6,001 out-of-sample test applicants · R / XGBoost / Shiny</div>
+</div></section>
+
+<div class="wrap">
+  <div class="kpis">
+    <div class="card"><div class="lbl">ROC AUC</div><div class="val" style="color:var(--safe)">0.77</div><div class="note">Gini 0.54 · out-of-sample</div></div>
+    <div class="card"><div class="lbl">PR-AUC</div><div class="val" style="color:var(--ink)">0.54</div><div class="note">base default rate ~22%</div></div>
+    <div class="card"><div class="lbl">Recall</div><div class="val" style="color:var(--ink)">94%</div><div class="note">defaulters caught</div></div>
+    <div class="card"><div class="lbl">Expected loss</div><div class="val" style="color:var(--risk)">5.9%</div><div class="note">portfolio rate</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h3>Live credit-risk scorecard</h3>
+      <div class="field"><div class="field-top"><label>Credit limit (NT$)</label><span class="v" id="v_lim">200,000</span></div>
+        <input type="range" id="lim" min="10000" max="800000" step="10000" value="200000"></div>
+      <div class="field"><div class="field-top"><label>Age</label><span class="v" id="v_age">35</span></div>
+        <input type="range" id="age" min="18" max="75" step="1" value="35"></div>
+      <div class="field"><div class="field-top"><label>Most recent repayment status</label><span class="v" id="v_pay">On time (0)</span></div>
+        <input type="range" id="pay" min="-2" max="8" step="1" value="0"></div>
+      <div class="field"><label style="font-size:13.5px;color:var(--ink-2);display:block;margin-bottom:6px;">Education</label>
+        <select id="edu"><option value="1">Graduate school</option><option value="2" selected>University</option><option value="3">High school</option><option value="4">Other</option></select></div>
+      <div class="field"><label style="font-size:13.5px;color:var(--ink-2);display:block;margin-bottom:6px;">Marital status</label>
+        <select id="mar"><option value="1">Married</option><option value="2" selected>Single</option><option value="3">Other</option></select></div>
+      <div class="field"><div class="field-top"><label>Decision threshold (PD)</label><span class="v" id="v_thr">8.7%</span></div>
+        <input type="range" id="thr" min="1" max="50" step="0.1" value="8.7"></div>
+
+      <div class="readout">
+        <div class="gauge"><div class="pd" id="pd">–</div><div class="pdl">Probability of default</div></div>
+        <div class="verdict">
+          <span class="decision" id="dec">–</span>
+          <span class="el">Expected loss: <b id="el">–</b> <span style="color:var(--ink-3)">(LGD 45% · EAD = limit)</span></span>
+        </div>
+      </div>
+      <div class="why"><div class="why-h">Top reason codes</div><ul id="why"></ul></div>
+      <div class="disclaim"><b>Illustrative</b> — reflects the fitted relationship (recent repayment status is the dominant driver, as in the trained XGBoost model). The full model runs in the Shiny app; this is a lightweight in-browser version.</div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Model performance (out-of-sample · n = 6,001)</h3>
+        <table>
+          <tr><th>Metric</th><th style="text-align:right">Value</th></tr>
+          <tr><td>ROC AUC</td><td class="n">0.771</td></tr>
+          <tr><td>Gini (2·AUC−1)</td><td class="n">0.542</td></tr>
+          <tr><td>PR-AUC</td><td class="n">0.540</td></tr>
+          <tr><td>Brier score</td><td class="n">0.137</td></tr>
+          <tr><td>Chosen threshold</td><td class="n">0.087</td></tr>
+          <tr><td>Recall / sensitivity</td><td class="n">0.942</td></tr>
+          <tr><td>Specificity</td><td class="n">0.251</td></tr>
+          <tr><td>Portfolio expected-loss rate</td><td class="n">5.9%</td></tr>
+        </table>
+        <div class="disclaim">Threshold tuned for high recall — the model catches 94% of true defaulters, the priority for provisioning. Calibrated via Platt scaling.</div>
+      </div>
+      <div class="panel">
+        <h3>Documentation &amp; code</h3>
+        <div class="links">
+          <a class="solid" href="https://github.com/vaibhavsethi01/banking-risk-platform" target="_blank" rel="noopener">Source repository</a>
+          <a class="hollow" href="model-card-banking.html" target="_blank" rel="noopener">Model card</a>
+          <a class="hollow" href="business-case-banking.html" target="_blank" rel="noopener">Business case</a>
+        </div>
+        <div class="disclaim">The interactive Shiny dashboard (batch CSV scoring, portfolio approval &amp; loss curves, diagnostics) runs locally / on shinyapps.io — see the repository README.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer><div class="foot">Built by Vaibhav Sethi · R · XGBoost · Shiny · SHAP · tidyverse · Basel-style PD × LGD × EAD. Illustrative scorecard; not a deployed lending decision system.</div></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const PAYLBL={"-2":"No credit use (-2)","-1":"Paid in full (-1)","0":"On time (0)","1":"1 month late","2":"2 months late","3":"3 months late","4":"4 months late","5":"5 months late","6":"6 months late","7":"7 months late","8":"8+ months late"};
+function score(){
+  const lim=+$('lim').value, age=+$('age').value, pay=+$('pay').value, edu=+$('edu').value, mar=+$('mar').value, thr=+$('thr').value/100;
+  $('v_lim').textContent=lim.toLocaleString(); $('v_age').textContent=age;
+  $('v_pay').textContent=PAYLBL[pay]; $('v_thr').textContent=(thr*100).toFixed(1)+'%';
+  const zPay=0.62*pay, zLim=-0.0000030*(lim-150000), zAge=-0.010*(age-35),
+        zEdu={1:-0.15,2:0,3:0.12,4:0.05}[edu]||0, zMar={1:0.05,2:0,3:0.03}[mar]||0;
+  const z=-1.55+zPay+zLim+zAge+zEdu+zMar, pd=1/(1+Math.exp(-z));
+  $('pd').textContent=(pd*100).toFixed(1)+'%';
+  $('pd').style.color = pd>=0.30?'var(--risk)':pd>=0.12?'var(--warn)':'var(--safe)';
+  const dec=$('dec');
+  if(pd>=thr){dec.textContent='REVIEW / DECLINE';dec.style.background='var(--risk-soft)';dec.style.color='var(--risk)';}
+  else{dec.textContent='APPROVE';dec.style.background='var(--safe-soft)';dec.style.color='var(--safe)';}
+  const el=pd*0.45*lim;
+  $('el').textContent='NT$'+Math.round(el).toLocaleString();
+  const parts=[['Recent repayment status',zPay],['Credit limit',zLim],['Age',zAge],['Education',zEdu],['Marital status',zMar]];
+  parts.sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
+  $('why').innerHTML=parts.slice(0,3).map(p=>`<li>${p[0]} — ${p[1]>0.001?'raises':p[1]<-0.001?'lowers':'neutral for'} default risk</li>`).join('');
+}
+['lim','age','pay','edu','mar','thr'].forEach(id=>$(id).addEventListener('input',score));
+score();
+</script>
+</body>
+</html>

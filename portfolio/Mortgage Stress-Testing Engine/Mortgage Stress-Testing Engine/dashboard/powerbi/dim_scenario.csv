@@ -1,0 +1,3 @@
+scenario_id,scenario,scenario_label,peak_unemployment_pct,hpi_trough_pct
+1,baseline,Baseline,4.6,
+2,severely_adverse,Severely Adverse,10.0,-30.0
