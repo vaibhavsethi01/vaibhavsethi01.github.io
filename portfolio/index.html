@@ -445,7 +445,6 @@
     var bin=atob(RESUME_B64), bytes=new Uint8Array(bin.length);
     for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
     var rurl=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
-    document.querySelectorAll('a[data-resume]').forEach(function(a){a.href=rurl;});
   }catch(e){}
 
   const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
