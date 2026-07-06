@@ -387,9 +387,67 @@
 <section class="block" id="about">
   <div class="wrap">
     <div class="sec-h"><span class="n">02</span><h2>The candidate</h2></div>
+
+    <div style="text-align:center;margin:6px 0 18px;">
+      <svg id="vsChart" viewBox="0 0 520 250" width="520" style="max-width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <script>
+    (function(){
+      var svg=document.getElementById('vsChart'); if(!svg) return;
+      var NS='http://www.w3.org/2000/svg';
+      function el(t,a,x){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;svg.appendChild(e);return e;}
+      var INK='#14171a',RED='#c0392b',GRID='#e6eaee',MUT='#838c95';
+      var L=58,R=495,T=58,B=200,xMax=8,yMax=5;
+      function X(d){return L+(d/xMax)*(R-L);} function Y(d){return B-(d/yMax)*(B-T);}
+      for(var yi=0;yi<=yMax;yi++){el('line',{x1:L,y1:Y(yi),x2:R,y2:Y(yi),stroke:GRID,'stroke-width':1});el('text',{x:L-8,y:Y(yi)+3,fill:MUT,'font-size':9,'font-family':'monospace','text-anchor':'end'},yi);}
+      for(var xi=0;xi<=xMax;xi++){el('line',{x1:X(xi),y1:T,x2:X(xi),y2:B,stroke:GRID,'stroke-width':1});el('text',{x:X(xi),y:B+15,fill:MUT,'font-size':9,'font-family':'monospace','text-anchor':'middle'},xi);}
+      el('line',{x1:L,y1:T,x2:L,y2:B,stroke:'#c9ced4','stroke-width':1.4});
+      el('line',{x1:L,y1:B,x2:R,y2:B,stroke:'#c9ced4','stroke-width':1.4});
+      el('text',{x:20,y:22,fill:INK,'font-family':'"Space Grotesk",sans-serif','font-size':15,'font-weight':700},'Signal vs. Noise');
+      el('text',{x:20,y:37,fill:MUT,'font-size':10,'font-family':'monospace'},'fig. 1 — least-squares fit · R² = 0.99');
+      var cy=(T+B)/2; el('text',{x:16,y:cy,fill:MUT,'font-size':10,'font-family':'monospace','text-anchor':'middle','transform':'rotate(-90 16 '+cy+')'},'signal');
+      el('text',{x:(L+R)/2,y:B+34,fill:MUT,'font-size':10,'font-family':'monospace','text-anchor':'middle'},'time, t');
+      el('circle',{cx:398,cy:20,r:4,fill:RED});el('text',{x:406,y:23,fill:MUT,'font-size':10,'font-family':'monospace'},'observed');
+      el('line',{x1:470,y1:20,x2:486,y2:20,stroke:INK,'stroke-width':3,'stroke-linecap':'round'});el('text',{x:490,y:23,fill:MUT,'font-size':10,'font-family':'monospace'},'fit');
+
+      var Vpts=[[0.8,4.4],[1.2,3.4],[1.6,2.3],[2.0,1.0],[2.4,2.3],[2.8,3.4],[3.2,4.4]];
+      var Spts=[[5.0,1.35],[5.7,1.2],[6.5,1.35],[6.9,2.0],[6.4,2.6],[5.8,3.0],[5.3,3.5],[5.4,4.2],[6.2,4.55],[6.9,4.15]];
+      var Cpts=[[3.2,4.4],[5.0,1.35]];
+      function pathOf(pts,stroke,w,dash){
+        var d='M '+pts.map(function(p){return X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1);}).join(' L ');
+        var a={d:d,fill:'none',stroke:stroke,'stroke-width':w,'stroke-linecap':'round','stroke-linejoin':'round'};
+        if(dash)a['stroke-dasharray']=dash;
+        var p=el('path',a); return p;
+      }
+      function fracs(pts){var cum=[0],tot=0;for(var i=1;i<pts.length;i++){var a=X(pts[i][0])-X(pts[i-1][0]),b=Y(pts[i][1])-Y(pts[i-1][1]);tot+=Math.sqrt(a*a+b*b);cum.push(tot);}return pts.map(function(p,i){return tot?cum[i]/tot:0;});}
+      var vPath=pathOf(Vpts,INK,3), cPath=pathOf(Cpts,'#aab0b6',2,'2 5'), sPath=pathOf(Spts,INK,3);
+      function dotsOf(pts){return pts.map(function(p){return el('circle',{cx:X(p[0]),cy:Y(p[1]),r:5,fill:RED,stroke:'#fff','stroke-width':1.5,opacity:0});});}
+      var vDotEls=dotsOf(Vpts), sDotEls=dotsOf(Spts), vF=fracs(Vpts), sF=fracs(Spts);
+      var vLen=vPath.getTotalLength(), sLen=sPath.getTotalLength();
+      vPath.style.strokeDasharray=vLen; sPath.style.strokeDasharray=sLen;
+      function hide(){vPath.style.strokeDashoffset=vLen; sPath.style.strokeDashoffset=sLen; cPath.style.opacity=0; vDotEls.concat(sDotEls).forEach(function(c){c.setAttribute('opacity',0);});}
+      hide();
+      var raf=null,t0=null;
+      function cl(x){return x<0?0:x>1?1:x;} function ease(x){return 1-Math.pow(1-x,3);}
+      function frame(ts){if(t0==null)t0=ts;var e=ts-t0,done=true;
+        var vp=ease(cl(e/1200)); vPath.style.strokeDashoffset=vLen*(1-vp);
+        vDotEls.forEach(function(c,i){c.setAttribute('opacity',vp>=vF[i]?1:0);}); if(vp<1)done=false;
+        var cp=cl((e-1250)/350); cPath.style.opacity=cp; if(cp<1)done=false;
+        var sp=ease(cl((e-1650)/1500)); sPath.style.strokeDashoffset=sLen*(1-sp);
+        sDotEls.forEach(function(c,i){c.setAttribute('opacity',sp>=sF[i]?1:0);}); if(sp<1)done=false;
+        if(!done)raf=requestAnimationFrame(frame);
+      }
+      function run(){if(raf)cancelAnimationFrame(raf);t0=null;hide();raf=requestAnimationFrame(frame);}
+      var seen=false;
+      try{var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){if(!seen){seen=true;run();}}else{seen=false;}});},{threshold:0.35});io.observe(svg);}
+      catch(err){run();}
+    })();
+    </script>
+
     <div class="about">
       <p>I'm a fourth-year UBC student finishing a combined major in <b>Statistics and Physics</b>. Most statistics students stop at the notebook — a model that scores well on a held-out set and never leaves the laptop. I'm interested in the part after that: is the probability calibrated, can I explain every score, and do I know where it breaks?</p>
       <p>That instinct comes from the physics half of the degree. Telling a real gravitational-wave event from detector noise is the same discipline as telling a real default signal from a noisy credit file — you respect the noise, you quantify your uncertainty, and you don't trust a number you can't defend. It's why I evaluate on PR AUC instead of accuracy when defaults are rare, and why every model I build ships with a model card.</p>
+      <p>Off the clock, I devig sportsbook odds and check whether my probability estimates are actually <b>calibrated</b> — turns out I like probability enough to do it for fun. Same instinct as the day job: I calibrate PDs at work and odds on weekends.</p>
       <p>I'm targeting <b>data analyst</b> and <b>quantitative / credit-risk analyst</b> roles for the 2027 new-grad cycle, open to a Fall 2026 co-op. Bloomberg Market Concepts certified; based in Vancouver, also open to Dubai and Gurgaon.</p>
     </div>
   </div>
